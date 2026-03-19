@@ -6,7 +6,6 @@
     <title>Mapa Geopolítico 3D | PromArgentina</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/three@0.174.0/build/three.min.js"></script>
     <script src="https://unpkg.com/globe.gl@2.33.1/dist/globe.gl.min.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
@@ -30,15 +29,14 @@
         .panel-header{padding:20px;border-bottom:1px solid var(--border);background:var(--navy2);color:#fff;}
         .panel-body{padding:20px;flex:1;}
         .pill{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid;transition:all 0.2s;}
-        .pill.active{color:#fff;}
         .pill.type-all{border-color:var(--muted);color:var(--muted);}
-        .pill.type-all.active{background:var(--muted);border-color:var(--muted);}
+        .pill.type-all.active{background:var(--muted);border-color:var(--muted);color:#fff;}
         .pill.type-eco{border-color:var(--blue);color:var(--blue);}
-        .pill.type-eco.active{background:var(--blue);}
+        .pill.type-eco.active{background:var(--blue);color:#fff;}
         .pill.type-mil{border-color:var(--red);color:var(--red);}
-        .pill.type-mil.active{background:var(--red);}
+        .pill.type-mil.active{background:var(--red);color:#fff;}
         .pill.type-def{border-color:#8e44ad;color:#8e44ad;}
-        .pill.type-def.active{background:#8e44ad;}
+        .pill.type-def.active{background:#8e44ad;color:#fff;}
         
         .kpi-row{display:flex;gap:10px;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--border);}
         .kpi-card{flex:1;padding:12px;background:var(--ice);border-radius:8px;text-align:center;border:1px solid var(--border);}
@@ -109,43 +107,127 @@ const INLINE_DATA = {"blocs": [{"name": "Unión Europea (UE)", "type": "Económi
 const DATA = INLINE_DATA;
 
 const NAME_MAP = {
-    'United States of America': 'Estados Unidos',
-    'Russian Federation': 'Rusia',
-    'United Kingdom': 'Reino Unido',
-    'Venezuela, Bolivarian Republic of': 'Venezuela',
-    'Bolivia, Plurinational State of': 'Bolivia',
-    'Iran, Islamic Republic of': 'Irán',
-    'Syrian Arab Republic': 'Siria',
-    'Korea, Republic of': 'Corea del Sur',
-    'Korea, Democratic People\'s Republic of': 'Corea del Norte',
-    'Taiwan, Province of China': 'Taiwán',
-    'Moldova, Republic of': 'Moldavia',
-    'Tanzania, United Republic of': 'Tanzania',
-    'United Republic of Tanzania': 'Tanzania',
-    'Greenland': 'Groenlandia',
-    'Viet Nam': 'Vietnam',
-    'Brunei Darussalam': 'Brunéi',
-    'Lao People\'s Democratic Republic': 'Laos',
-    'Congo, The Democratic Republic of the': 'República Democrática del Congo',
-    'Côte d\'Ivoire': 'Costa de Marfil',
+    // GeoJSON English name → Spanish data name
+    'Afghanistan': 'Afganistán',
+    'Algeria': 'Argelia',
+    'Antigua and Barbuda': 'Antigua y Barbuda',
+    'Bahrain': 'Baréin',
+    'Belarus': 'Bielorrusia',
+    'Belgium': 'Bélgica',
+    'Belize': 'Belice',
+    'Benin': 'Benín',
+    'Botswana': 'Botsuana',
+    'Brazil': 'Brasil',
+    'Brunei': 'Brunéi',
+    'Cambodia': 'Camboya',
+    'Cameroon': 'Camerún',
+    'Canada': 'Canadá',
+    'Central African Republic': 'República Centroafricana',
+    'Comoros': 'Comoras',
+    'Croatia': 'Croacia',
+    'Cyprus': 'Chipre',
     'Czechia': 'República Checa',
+    'Democratic Republic of the Congo': 'República Democrática del Congo',
+    'Denmark': 'Dinamarca',
+    'Dominican Republic': 'República Dominicana',
+    'Egypt': 'Egipto',
+    'Equatorial Guinea': 'Guinea Ecuatorial',
+    'Ethiopia': 'Etiopía',
+    'eSwatini': 'Esuatini',
+    'Falkland Islands': 'Islas Malvinas',
+    'Finland': 'Finlandia',
+    'France': 'Francia',
+    'Gabon': 'Gabón',
+    'Germany': 'Alemania',
+    'Greece': 'Grecia',
+    'Greenland': 'Groenlandia',
+    'Grenada': 'Granada',
+    'Haiti': 'Haití',
+    'Hong Kong S.A.R.': 'Hong Kong, China',
+    'Hungary': 'Hungría',
+    'Iceland': 'Islandia',
+    'Iran': 'Irán',
+    'Ireland': 'Irlanda',
+    'Italy': 'Italia',
+    'Ivory Coast': 'Costa de Marfil',
+    'Japan': 'Japón',
+    'Jordan': 'Jordania',
+    'Kazakhstan': 'Kazajistán',
+    'Kenya': 'Kenia',
+    'Kyrgyzstan': 'Kirguistán',
+    'Latvia': 'Letonia',
+    'Lebanon': 'Líbano',
+    'Lesotho': 'Lesoto',
+    'Libya': 'Libia',
+    'Lithuania': 'Lituania',
+    'Luxembourg': 'Luxemburgo',
+    'Malawi': 'Malaui',
+    'Malaysia': 'Malasia',
+    'Maldives': 'Maldivas',
+    'Mali': 'Malí',
+    'Mauritius': 'Mauricio',
+    'Mexico': 'México',
+    'Morocco': 'Marruecos',
+    'Myanmar': 'Birmania (Myanmar)',
+    'Netherlands': 'Países Bajos',
+    'New Zealand': 'Nueva Zelanda',
+    'Niger': 'Níger',
+    'North Korea': 'Corea del Norte',
     'North Macedonia': 'Macedonia del Norte',
-    'Palestine, State of': 'Palestina',
-    'Eswatini': 'Suazilandia',
-    'Holy See (Vatican City State)': 'Ciudad del Vaticano',
-    'Bahamas': 'Las Bahamas',
-    'Falkland Islands (Malvinas)': 'Islas Malvinas',
-    'United Arab Emirates': 'Emiratos Árabes Unidos',
-    'Solomon Is.': 'Islas Salomón',
+    'Norway': 'Noruega',
+    'Oman': 'Omán',
+    'Pakistan': 'Pakistán',
+    'Palestine': 'Palestina',
+    'Panama': 'Panamá',
+    'Papua New Guinea': 'Papúa Nueva Guinea',
+    'Peru': 'Perú',
+    'Philippines': 'Filipinas',
+    'Poland': 'Polonia',
     'Qatar': 'Catar',
-    'Dominican Rep.': 'República Dominicana',
-    'Central African Rep.': 'República Centroafricana',
-    'Eq. Guinea': 'Guinea Ecuatorial',
-    'S. Sudan': 'Sudán del Sur',
-    'Dem. Rep. Congo': 'República Democrática del Congo',
-    'Congo': 'República del Congo',
-    'Bosnia and Herz.': 'Bosnia y Herzegovina',
-    'W. Sahara': 'Sahara Occidental'
+    'Republic of the Congo': 'República del Congo',
+    'Romania': 'Rumanía',
+    'Russia': 'Rusia',
+    'Rwanda': 'Ruanda',
+    'Saint Kitts and Nevis': 'San Cristóbal y Nieves',
+    'Saint Lucia': 'Santa Lucía',
+    'Saint Vincent and the Grenadines': 'San Vicente y las Granadinas',
+    'Saudi Arabia': 'Arabia Saudita',
+    'Sierra Leone': 'Sierra Leona',
+    'Singapore': 'Singapur',
+    'Slovakia': 'Eslovaquia',
+    'Slovenia': 'Eslovenia',
+    'South Africa': 'Sudáfrica',
+    'South Korea': 'Corea del Sur',
+    'South Sudan': 'Sudán del Sur',
+    'Spain': 'España',
+    'Sudan': 'Sudán',
+    'Suriname': 'Surinam',
+    'Sweden': 'Suecia',
+    'Switzerland': 'Suiza',
+    'São Tomé and Principe': 'Santo Tomé y Príncipe',
+    'Taiwan': 'Taiwán',
+    'Tajikistan': 'Tayikistán',
+    'Thailand': 'Tailandia',
+    'The Bahamas': 'Bahamas',
+    'Trinidad and Tobago': 'Trinidad y Tobago',
+    'Tunisia': 'Túnez',
+    'Turkey': 'Turquía',
+    'Ukraine': 'Ucrania',
+    'United Arab Emirates': 'Emiratos Árabes Unidos',
+    'United Kingdom': 'Reino Unido',
+    'United Republic of Tanzania': 'Tanzania',
+    'United States of America': 'Estados Unidos',
+    'Uzbekistan': 'Uzbekistán',
+    'Western Sahara': 'Sahara Occidental',
+    'Zimbabwe': 'Zimbabue',
+    // Legacy/alternate GeoJSON names
+    'Viet Nam': 'Vietnam',
+    'Lao People\'s Democratic Republic': 'Laos',
+    'Côte d\'Ivoire': 'Costa de Marfil',
+    'Djibouti': 'Yibuti',
+    'Solomon Islands': 'Islas Salomón',
+    'Republic of Serbia': 'Serbia',
+    'Congo': 'República del Congo'
 };
 
 const DEFAULT_COLOR = '#E2E8F0';
@@ -178,8 +260,8 @@ function buildLookups() {
             countryBlocs[cName].push({
                 bloc_name: b.name,
                 bloc_type: b.type,
-                join_date: m.join_date,
-                status: m.status
+                join_date: m.date || 'N/A',
+                status: m.status || 'Miembro'
             });
         });
     });
@@ -211,38 +293,49 @@ function geoNameToDataName(geoName) {
     return result;
 }
 
-function getCountryColor(countryName) {
-    if (countryName === 'Groenlandia') {
-        if (activeType === 'all' || activeType === 'Militar') {
-            if (!activeBloc || activeBloc === 'OTAN (NATO)') return TYPE_COLORS['Militar'];
+// Precomputed color map — rebuilt only when filters change, O(1) per polygon during render
+let colorCache = new Map();
+
+function rebuildColorCache() {
+    colorCache.clear();
+
+    // Greenland special case
+    if (activeType === 'all' || activeType === 'Militar') {
+        if (!activeBloc || activeBloc === 'OTAN (NATO)') {
+            colorCache.set('Groenlandia', TYPE_COLORS['Militar']);
         }
-        return DEFAULT_COLOR;
     }
-    
+
     if (activeType === 'Acuerdos Defensa') {
-        if (defenseCountriesSet.has(countryName)) return TYPE_COLORS['Acuerdos Defensa'];
-        return DEFAULT_COLOR;
+        defenseCountriesSet.forEach(c => {
+            colorCache.set(c, TYPE_COLORS['Acuerdos Defensa']);
+        });
+        return;
     }
-    
-    const blocs = countryBlocs[countryName] || [];
-    if (blocs.length === 0) return DEFAULT_COLOR;
-    
-    if (activeBloc) {
-        const bInfo = blocs.find(b => b.bloc_name === activeBloc);
-        if (bInfo) return TYPE_COLORS[bInfo.bloc_type] || DEFAULT_COLOR;
-        return DEFAULT_COLOR;
+
+    for (const country in countryBlocs) {
+        const blocs = countryBlocs[country];
+        let color = null;
+
+        if (activeBloc) {
+            const bInfo = blocs.find(b => b.bloc_name === activeBloc);
+            if (bInfo) color = TYPE_COLORS[bInfo.bloc_type] || null;
+        } else if (activeType !== 'all') {
+            const hasType = blocs.some(b => b.bloc_type === activeType);
+            if (hasType) color = TYPE_COLORS[activeType];
+        } else {
+            const hasMil = blocs.some(b => b.bloc_type === 'Militar');
+            const hasEco = blocs.some(b => b.bloc_type === 'Económico');
+            if (hasMil) color = TYPE_COLORS['Militar'];
+            else if (hasEco) color = TYPE_COLORS['Económico'];
+        }
+
+        if (color) colorCache.set(country, color);
     }
-    
-    if (activeType !== 'all') {
-        const hasType = blocs.some(b => b.bloc_type === activeType);
-        return hasType ? TYPE_COLORS[activeType] : DEFAULT_COLOR;
-    }
-    
-    const hasMil = blocs.some(b => b.bloc_type === 'Militar');
-    const hasEco = blocs.some(b => b.bloc_type === 'Económico');
-    if (hasMil) return TYPE_COLORS['Militar'];
-    if (hasEco) return TYPE_COLORS['Económico'];
-    return DEFAULT_COLOR;
+}
+
+function getCountryColor(countryName) {
+    return colorCache.get(countryName) || DEFAULT_COLOR;
 }
 
 async function init() {
@@ -268,7 +361,8 @@ async function init() {
 
 function initGlobe() {
     const elem = document.getElementById('map');
-    
+    rebuildColorCache();
+
     // Wait for Globe to be ready on window
     if (typeof Globe === 'undefined') {
         console.error("Globe object not found! Three.js / Globe.gl scripts not loaded.");
@@ -305,6 +399,7 @@ function initGlobe() {
 }
 
 function renderGlobe() {
+    rebuildColorCache();
     if (myGlobe) {
         myGlobe.polygonCapColor(d => {
             const dn = geoNameToDataName(d.properties.name);
@@ -396,9 +491,9 @@ function selectCountry(countryName) {
             
             defs.forEach(d => {
                 html += `<div class="bloc-card">
-                    <div class="bloc-title">${d.topic}</div>
-                    <div style="font-size:13px;color:var(--muted);margin-bottom:8px;">${d.type} — Emitido: ${d.date_issue}</div>
-                    <div style="font-size:14px;line-height:1.5;">${d.note}</div>
+                    <div class="bloc-title">${d.title}</div>
+                    <div style="font-size:13px;color:var(--muted);margin-bottom:8px;">${d.type}</div>
+                    <div style="font-size:14px;line-height:1.5;">${d.details}</div>
                 </div>`;
             });
             

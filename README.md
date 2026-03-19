@@ -1,6 +1,6 @@
 # Mapa Geopolítico 3D
 
-👉 **[Ver el mapa en vivo y funcionar](https://facusturla.github.io/mapa-geopolitico-3d/)** 👈
+ **Ver el mapa en vivo (https://facusturla.github.io/mapa-geopolitico-3d/)** 
 
 Este mapa interactivo permite visualizar y analizar los principales bloques económicos, alianzas militares y acuerdos de defensa a nivel mundial.
 
