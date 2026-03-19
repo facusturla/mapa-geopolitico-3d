@@ -1,5 +1,7 @@
 # Mapa Geopolítico 3D
 
+👉 **[Ver el mapa en vivo y funcionar](https://facusturla.github.io/mapa-geopolitico-3d/)** 👈
+
 Este mapa interactivo permite visualizar y analizar los principales bloques económicos, alianzas militares y acuerdos de defensa a nivel mundial.
 
 Fue diseñado para ofrecer un panorama geopolítico rápido, destacando qué países pertenecen a organizaciones clave (como la OTAN, los BRICS+, la Unión Europea, etc.) y mapeando tratados de defensa bilaterales y multilaterales.

@@ -163,6 +163,9 @@ let countryBlocs = {};
 let activeType = 'all';
 let activeBloc = '';
 
+const nameCache = {};
+const defenseCountriesSet = new Set();
+
 function normalizeName(name) {
     return name.trim();
 }
@@ -180,21 +183,32 @@ function buildLookups() {
             });
         });
     });
+    // Precompute set for fast lookup
+    if (DATA.defense_agreements) {
+        DATA.defense_agreements.forEach(d => {
+            defenseCountriesSet.add(normalizeName(d.country));
+        });
+    }
 }
 
 function geoNameToDataName(geoName) {
+    if (nameCache[geoName]) return nameCache[geoName];
+    
+    let result = geoName;
     const mapped = NAME_MAP[geoName];
-    if (mapped) return mapped;
+    if (mapped) {
+        result = mapped;
+    } else if (countryBlocs[geoName]) {
+        result = geoName;
+    } else if (defenseCountriesSet.has(geoName)) {
+        result = geoName;
+    } else {
+        const match = Object.keys(countryBlocs).find(c => c.toLowerCase() === geoName.toLowerCase());
+        if (match) result = match;
+    }
     
-    // exact match
-    if (countryBlocs[geoName]) return geoName;
-    if (DATA.defense_agreements.some(d => normalizeName(d.country) === geoName)) return geoName;
-    
-    // simple translation map match inside our data
-    const match = Object.keys(countryBlocs).find(c => c.toLowerCase() === geoName.toLowerCase());
-    if (match) return match;
-    
-    return geoName;
+    nameCache[geoName] = result;
+    return result;
 }
 
 function getCountryColor(countryName) {
@@ -206,7 +220,7 @@ function getCountryColor(countryName) {
     }
     
     if (activeType === 'Acuerdos Defensa') {
-        if (DATA.defense_agreements.some(d => normalizeName(d.country) === countryName)) return TYPE_COLORS['Acuerdos Defensa'];
+        if (defenseCountriesSet.has(countryName)) return TYPE_COLORS['Acuerdos Defensa'];
         return DEFAULT_COLOR;
     }
     
